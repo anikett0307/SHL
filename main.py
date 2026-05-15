@@ -5,15 +5,17 @@ from services.agent import handle_chat
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# ✅ CORS (keep for now)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # for development
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# request schema
+# ✅ Schemas
 class Message(BaseModel):
     role: str
     content: str
@@ -21,14 +23,17 @@ class Message(BaseModel):
 class ChatRequest(BaseModel):
     messages: List[Message]
 
+# ✅ Root
+@app.get("/")
+def home():
+    return {"message": "API running 🚀"}
 
-# ✅ health endpoint
+# ✅ Health check
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
-
-# ✅ chat endpoint
+# ✅ Chat endpoint (ONLY ONE)
 @app.post("/chat")
 def chat(request: ChatRequest):
     messages = [msg.dict() for msg in request.messages]
